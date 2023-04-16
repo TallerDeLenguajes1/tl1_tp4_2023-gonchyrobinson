@@ -14,6 +14,7 @@ Tarea CargaTarea(int i);
 void MuestraEstructura(Tarea estruct);
 void MuestraPunteroDoble(Tarea**  p, int cant);
 void RealizaTarea(Tarea**pendientes, Tarea**realizadas,int cant);
+void LiberaMemoria(Tarea **punt, int cant);
 
 int main(){
     int cantTareas;
@@ -86,4 +87,10 @@ void RealizaTarea(Tarea**pendientes, Tarea**realizadas,int cant){
         }
     }
     
+}
+void LiberaMemoria(Tarea **punt, int cant){
+    for(int i = 0; i<cant; i++){
+        free(punt[i]);
+    }
+    free(punt);
 }
