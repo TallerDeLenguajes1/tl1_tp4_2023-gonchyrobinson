@@ -18,6 +18,7 @@ void RealizaTarea(Tarea**pendientes, Tarea**realizadas,int cant);
 Tarea BuscarTarea(Tarea** punt, Tarea** punt2, int cant, int id);
 Tarea BuscarTareaPorPalabra(Tarea **punt, Tarea** punt2, int cant, char* palabra);
 void Menu(Tarea**pendientes, Tarea**realizadas, int cant);
+void LiberaMemoria(Tarea** pendientes, Tarea** realizadas, int cant);
 
 int main(){
     int cantTareas;
@@ -35,6 +36,7 @@ int main(){
     MuestraPunteroDoble(tareasPendientes, cantTareas);
     printf("\n____________________________________________________\n");
     Menu(tareasPendientes, tareasRealizadas, cantTareas);
+    LiberaMemoria(tareasPendientes, tareasRealizadas, cantTareas);
 }
 
 
@@ -161,4 +163,13 @@ void Menu(Tarea**pendientes, Tarea**realizadas, int cant){
         }
     }
     
+}
+
+void LiberaMemoria(Tarea** pendientes, Tarea** realizadas, int cant){
+    for(int i=0; i<cant;i++){
+        free(pendientes[i]);
+        free(realizadas[i]);
+    }
+    free(pendientes);
+    free(realizadas);
 }
