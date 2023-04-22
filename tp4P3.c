@@ -193,7 +193,7 @@ void LiberaMemoria(Lista realizadas, Lista pendientes){
         aux=pendientes;
         free(pendientes->dato.Descripcion);
         pendientes=pendientes->siguiente;
-        free(aux);
+        free(aux); 
     }
     while (!EsListaVacia(realizadas))
     {
