@@ -30,29 +30,16 @@ void CambiarTareaPendientes(Lista* pendientes);
 bool EsPrimerElemento(Lista lista);
 void LiberaMemoria(Lista realizadas, Lista pendientes);
 Lista DesenlazarNodoDeLaLista(Lista* cabecera);
+void menu(Lista* pendientes, Lista* realizadas, Lista* pendientesNueva);
+Tarea BuscarTareaPorId(Lista pendientes, Lista realizadas, Lista pendientesNueva);
 
 int main(){
     Lista pendientes;
     Lista realizadas;
     Lista pendientesNueva=CrearListaVacia();
     Lista aux;
-    int tareas;
-    pendientes=CrearListaVacia();
-    realizadas=CrearListaVacia();
-    printf("Ingrese cuantas tareas cargara:  ");
-
-    scanf("%d",&tareas);
-    for(int i=0; i<tareas;i++){
-        aux=CrearNodo(i);
-        InsertarNodo(&pendientes,aux);
-
-    }
     MuestraLista(pendientes);
     RealizoTarea(&pendientes, &realizadas,&pendientesNueva);
-    printf("\n;;;;;;;;;;;;;;;;;;;;TAREAS REALIZADAS;;;;;;;;;;;;;;;;;;;\n");
-    MuestraLista(realizadas);
-    printf("\n++++++++++++++++++++++TAREAS PENDIENTES +++++++++++++++++++++++\n");
-    MuestraLista(pendientesNueva);
     LiberaMemoria(realizadas,pendientesNueva);
 }
 
@@ -130,53 +117,7 @@ void RealizoTarea(Lista* pendientes, Lista* realizadas, Lista* pendientesNueva){
         }
     } 
 }
-/*void RealizoTarea(Lista* pendientes, Lista* realizadas){
-    Lista aux=NULL;
-    Lista primerElementoPendientes=NULL;
-    Lista primero=NULL;
-    Lista anterior=NULL;
-    Lista aux2= NULL;
-    int realizado;
-    int bandera =0;
-    while (!EsListaVacia((*pendientes)))
-    {
-        printf("\n********************************************\n"); 
-        MuestraEstructura((*pendientes)->dato);
-        printf("\nRealizo la tarea: \n1- Si\n0-No\n");
-        scanf("%d", &realizado);
-        fflush(stdin);
-        if(realizado == 1){
-            aux=*pendientes;
-            (*pendientes)=(*pendientes)->siguiente; 
-            if (!EsListaVacia(*realizadas))
-            {
-                aux2=*realizadas;
-                *realizadas=aux;
-                (*realizadas)->siguiente=aux2;
-            }else
-            {
-                *realizadas=aux;
-                (*realizadas)->siguiente=NULL;
-            }
-                
-        }else
-        {
-            if (anterior==NULL)
-            {
-                primero=(*pendientes);
-                anterior=(*pendientes);
-            }else{
-                anterior->siguiente=(*pendientes);
-                anterior=(*pendientes);
-            }
-            
-             (*pendientes)=(*pendientes)->siguiente;  
-             printf("Se eligio la opcion 0: %s", (*pendientes)->dato.Descripcion);         
-        }
-}
-(*pendientes)=primero;
-}
-*/
+
 
 bool EsPrimerElemento(Lista lista){
     if(!EsListaVacia(lista) && EsListaVacia(lista->siguiente)){
@@ -203,5 +144,87 @@ void LiberaMemoria(Lista realizadas, Lista pendientes){
         free(aux);
     }
     
+    
+}
+
+void menu(Lista* pendientes, Lista*realizadas, Lista*pendientesNueva){
+    int opcion;
+    int bandera=0;
+    Tarea tareaAuxiliar;
+    printf("\n::::::::::::::::::::::MENU:::::::::::::::::::::::::\n");
+    while (bandera==0)
+    {
+        printf("\n-----------------------------------------------------------\n");
+        printf("Ingrese una opcion:  \n");
+        scanf("%d", &opcion);
+        switch (opcion)
+        {
+        case 0:
+            bandera=1;
+            break;
+        case 1:
+            int tareas;
+            Lista aux;
+            pendientes=CrearListaVacia();
+            realizadas=CrearListaVacia();
+            printf("Ingrese cuantas tareas cargara:  ");
+
+            scanf("%d",&tareas);
+            for(int i=0; i<tareas;i++){
+                aux=CrearNodo(i);
+                InsertarNodo(pendientes,aux);
+            }
+        break;
+        case 2:
+            RealizoTarea(pendientes,realizadas,pendientesNueva);
+        default:
+        case 3:
+            printf("\n;;;;;;;;;;;;;;;;;;;;TAREAS REALIZADAS;;;;;;;;;;;;;;;;;;;\n");
+            MuestraLista(*realizadas);
+            printf("\n++++++++++++++++++++++TAREAS PENDIENTES +++++++++++++++++++++++\n");
+            MuestraLista(*pendientesNueva);
+        break;
+        case 4: 
+            tareaAuxiliar=BuscarTareaPorId(*pendientes,*realizadas,*pendientesNueva);
+            printf("\n- La tarea buscada es:  ");
+            MuestraEstructura(tareaAuxiliar);
+        break;
+        case 5: 
+
+        }
+
+    }
+    
+}
+Tarea BuscarTareaPorId(Lista pendientes, Lista realizadas, Lista pendientesNueva){
+    int id;
+    printf("\n''''''''''''''''''''''''''''''BUSCAR TAREA POR ID'''''''''''''''''''''''''''''\n");
+    printf("Ingrese el numero de id de la tarea buscada:  ");
+    scanf("%d",&id);
+    while (!EsListaVacia(pendientes))
+    {
+        if(pendientes->dato.TareaId==id){
+            return(pendientes->dato);
+        }
+        pendientes=pendientes->siguiente;
+    }
+    while (!EsListaVacia(realizadas))
+    {
+        if(realizadas->dato.TareaId==id){
+            return(realizadas->dato);
+        }
+        realizadas=realizadas->siguiente;
+    }
+    while (!EsListaVacia(pendientesNueva))
+    {
+        if(pendientesNueva->dato.TareaId==id){
+            return(pendientesNueva->dato);
+        }
+        pendientesNueva=pendientesNueva->siguiente;
+    }
+    
+}
+
+Tarea BuscarTareaPorPalabraClave(Lista* pendientes, Lista* realizadas, Lista* pendientesNueva){
     
 }
