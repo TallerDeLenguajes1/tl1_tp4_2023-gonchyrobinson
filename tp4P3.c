@@ -2,7 +2,8 @@
 #include<stdlib.h>
 #include<stdbool.h>
 #include<string.h>
-
+#define TAMA 100
+#define INDEFINIDO -999999
 struct Tarea{
     int TareaId;   //Numerado en ciclo iterativo
     char* Descripcion;
@@ -32,14 +33,14 @@ void LiberaMemoria(Lista realizadas, Lista pendientes);
 Lista DesenlazarNodoDeLaLista(Lista* cabecera);
 void menu(Lista* pendientes, Lista* realizadas, Lista* pendientesNueva);
 Tarea BuscarTareaPorId(Lista pendientes, Lista realizadas, Lista pendientesNueva);
+Tarea BuscarTareaPorPalabraClave(Lista pendientes, Lista realizadas, Lista pendientesNueva);
 
 int main(){
-    Lista pendientes;
-    Lista realizadas;
+    Lista pendientes=CrearListaVacia();
+    Lista realizadas=CrearListaVacia();
     Lista pendientesNueva=CrearListaVacia();
     Lista aux;
-    MuestraLista(pendientes);
-    RealizoTarea(&pendientes, &realizadas,&pendientesNueva);
+    menu(&pendientes,&realizadas,&pendientesNueva);
     LiberaMemoria(realizadas,pendientesNueva);
 }
 
@@ -155,7 +156,8 @@ void menu(Lista* pendientes, Lista*realizadas, Lista*pendientesNueva){
     while (bandera==0)
     {
         printf("\n-----------------------------------------------------------\n");
-        printf("Ingrese una opcion:  \n");
+        printf("Ingrese una opcion:  \n0-salir\n1-Cargar Tareas\n2-Marcar tareas realizadas\n3- Mostrar Tareas Realizadas\n4-Buscar tareas por id\n5-Buscar tareas por palabra clave");
+        printf("\nOpcion eleginda:  ");
         scanf("%d", &opcion);
         switch (opcion)
         {
@@ -165,8 +167,6 @@ void menu(Lista* pendientes, Lista*realizadas, Lista*pendientesNueva){
         case 1:
             int tareas;
             Lista aux;
-            pendientes=CrearListaVacia();
-            realizadas=CrearListaVacia();
             printf("Ingrese cuantas tareas cargara:  ");
 
             scanf("%d",&tareas);
@@ -190,41 +190,94 @@ void menu(Lista* pendientes, Lista*realizadas, Lista*pendientesNueva){
             MuestraEstructura(tareaAuxiliar);
         break;
         case 5: 
-
+            tareaAuxiliar=BuscarTareaPorPalabraClave(*pendientes,*realizadas,*pendientesNueva);
+            if(tareaAuxiliar.TareaId!=INDEFINIDO){
+                printf("\n -La tarea buscada es :  \n");
+                MuestraEstructura(tareaAuxiliar);
+            }else
+            {
+                printf("\nNo se encontro la tarea buscada\n");
+            }
+        break;
+            
         }
 
     }
     
 }
 Tarea BuscarTareaPorId(Lista pendientes, Lista realizadas, Lista pendientesNueva){
+    Tarea tareaBuscada;
     int id;
+    int bandera=0;
     printf("\n''''''''''''''''''''''''''''''BUSCAR TAREA POR ID'''''''''''''''''''''''''''''\n");
     printf("Ingrese el numero de id de la tarea buscada:  ");
     scanf("%d",&id);
-    while (!EsListaVacia(pendientes))
+    while (!EsListaVacia(pendientes) && bandera==0)
     {
         if(pendientes->dato.TareaId==id){
-            return(pendientes->dato);
+            tareaBuscada=pendientes->dato;
+            bandera=1;
         }
         pendientes=pendientes->siguiente;
     }
-    while (!EsListaVacia(realizadas))
+    while (!EsListaVacia(realizadas) && bandera==0)
     {
         if(realizadas->dato.TareaId==id){
-            return(realizadas->dato);
+            tareaBuscada=realizadas->dato;
+            bandera=1;
         }
         realizadas=realizadas->siguiente;
     }
-    while (!EsListaVacia(pendientesNueva))
+    while (!EsListaVacia(pendientesNueva) && bandera==0)
     {
         if(pendientesNueva->dato.TareaId==id){
-            return(pendientesNueva->dato);
+            tareaBuscada=pendientesNueva->dato;
+            bandera=1;
         }
         pendientesNueva=pendientesNueva->siguiente;
     }
+    if(bandera==0){
+        tareaBuscada=CargaTarea(INDEFINIDO);
+    }
+    return(tareaBuscada);
     
 }
 
-Tarea BuscarTareaPorPalabraClave(Lista* pendientes, Lista* realizadas, Lista* pendientesNueva){
+Tarea BuscarTareaPorPalabraClave(Lista pendientes, Lista realizadas, Lista pendientesNueva){
+    char palabraClave[TAMA];
+    int bandera=0;
+    Tarea tareaBuscada;
+    printf("\n---------------------BUSQUEDA POR PALABRA CLAVE ----------------------------------\n");
+    printf("Ingrese la palabra clave:  ");
+    fflush(stdin);
+    gets(palabraClave);
+    while (!EsListaVacia(pendientes) && bandera==0)
+    {
+        if(strstr(pendientes->dato.Descripcion,palabraClave)!=NULL){
+            bandera=1;
+            tareaBuscada=pendientes->dato;
+        }
+        pendientes=pendientes->siguiente;
+    }
+    while (!EsListaVacia(realizadas) && bandera==0)
+    {
+        if(strstr(realizadas->dato.Descripcion,palabraClave)!=NULL){
+            bandera=1;
+            tareaBuscada=realizadas->dato;
+        }
+        realizadas=realizadas->siguiente;
+    }
+    while (!EsListaVacia(pendientesNueva) && bandera==0)
+    {
+        if(strstr(pendientesNueva->dato.Descripcion,palabraClave)!=NULL){
+            bandera=1;
+            tareaBuscada=pendientesNueva->dato;
+        }
+        pendientesNueva=pendientesNueva->siguiente;
+    }
+    if(bandera==0){
+        tareaBuscada=CargaTarea(INDEFINIDO);
+    }
+    return(tareaBuscada);
     
 }
