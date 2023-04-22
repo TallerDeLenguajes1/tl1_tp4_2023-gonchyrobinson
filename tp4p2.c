@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<stdbool.h>
+#include<string.h>
 
 struct Tarea{
     int TareaId;   //Numerado en ciclo iterativo
@@ -14,7 +15,10 @@ Tarea CargaTarea(int i);
 void MuestraEstructura(Tarea estruct);
 void MuestraPunteroDoble(Tarea**  p, int cant);
 void RealizaTarea(Tarea**pendientes, Tarea**realizadas,int cant);
-void LiberaMemoria(Tarea **punt, int cant);
+Tarea BuscarTarea(Tarea** punt, Tarea** punt2, int cant, int id);
+Tarea BuscarTareaPorPalabra(Tarea **punt, Tarea** punt2, int cant, char* palabra);
+void Menu(Tarea**pendientes, Tarea**realizadas, int cant);
+void LiberaMemoria(Tarea** pendientes, Tarea** realizadas, int cant);
 
 int main(){
     int cantTareas;
@@ -30,6 +34,9 @@ int main(){
     MuestraPunteroDoble(tareasRealizadas, cantTareas);
     printf("\n\n::::::::::::::::::TAREAS PENDIENTES::::::::::::::::::\n");
     MuestraPunteroDoble(tareasPendientes, cantTareas);
+    printf("\n____________________________________________________\n");
+    Menu(tareasPendientes, tareasRealizadas, cantTareas);
+    LiberaMemoria(tareasPendientes, tareasRealizadas, cantTareas);
 }
 
 
@@ -88,9 +95,81 @@ void RealizaTarea(Tarea**pendientes, Tarea**realizadas,int cant){
     }
     
 }
-void LiberaMemoria(Tarea **punt, int cant){
-    for(int i = 0; i<cant; i++){
-        free(punt[i]);
+Tarea BuscarTarea(Tarea** punt, Tarea** punt2, int cant, int id){
+    int bandera=0;
+    for (int i = 0; i < cant; i++)
+    {
+        if(punt[i]!=NULL){
+            if(punt[i]->TareaId==id){
+                return(*(punt[i]));
+                bandera=1;
+            }
+        }
+        if(punt2[i]!=NULL){
+            if(punt2[i]->TareaId==id){
+                return(*(punt2[i]));
+                bandera=1;
+            }
+        }
     }
-    free(punt);
+}
+Tarea BuscarTareaPorPalabra(Tarea **punt, Tarea** punt2, int cant, char* palabra){
+    int bandera=0;
+    for (int i = 0; i < cant; i++)
+    {
+        if(punt[i]!=NULL && bandera==0){
+            if (strstr(punt[i]->Descripcion, palabra)!=NULL)
+            {
+                return(*punt[i]);
+                bandera=1;
+            }
+            
+        }
+        if(punt2[i]!=NULL && bandera==0){
+            if (strstr(punt2[i]->Descripcion, palabra)!=NULL)
+            {
+               return(*punt2[i]);
+               bandera=1;
+            }
+            
+        }
+    }
+    
+}
+void Menu(Tarea**pendientes, Tarea**realizadas, int cant){
+    int menu=1;
+    int id;
+    char* palabra=(char*)malloc(sizeof(char)*100);
+    printf("{{{{{{{{{{MENU}}}}}}}}}}");
+    while (menu!=0){
+        printf("\n1- Buscar por id\n2- Buscar por palabra clave\n0-Salir  ");
+        scanf("%d", &menu);
+        switch (menu)
+        {
+        case 1:
+            printf("\n id que desea buscar:  ");
+            scanf("%d", &id);
+            BuscarTarea(pendientes, realizadas, cant,id);
+            printf("Ingrese el id de la tarea que busca:  \n");
+            MuestraEstructura(BuscarTarea(pendientes,realizadas,cant,id));
+            break;
+        case 2:
+            printf("\n palabra clave que busca: ");
+            fflush(stdin);
+            gets(palabra);
+            MuestraEstructura(BuscarTareaPorPalabra(pendientes,realizadas,cant,palabra));
+        default:
+            break;
+        }
+    }
+    
+}
+
+void LiberaMemoria(Tarea** pendientes, Tarea** realizadas, int cant){
+    for(int i=0; i<cant;i++){
+        free(pendientes[i]);
+        free(realizadas[i]);
+    }
+    free(pendientes);
+    free(realizadas);
 }
